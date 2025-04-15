@@ -2,7 +2,7 @@
     $host = "localhost";
     $user = "root";
     $clave = "";
-    $bd = "milagros_sas";
+    $bd = "sis_venta";
     $conexion = mysqli_connect($host,$user,$clave,$bd);
     if (mysqli_connect_errno()){
         echo "No se pudo conectar a la base de datos";

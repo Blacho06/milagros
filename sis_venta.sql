@@ -195,8 +195,8 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`idusuario`, `nombre`, `correo`, `usuario`, `clave`, `estado`) VALUES
-(1, 'angel sifuentes', 'angelsifuentes2580@gmail.com', 'admin', '1234', 1),
-(2, 'Vida informatico', 'angel@gmail.com', 'angel', '1234', 1);
+(1, 'angel sifuentes', 'angelsifuentes2580@gmail.com', 'admin', '21232f297a57a5a743894a0e4a801fc3', 1),
+(2, 'Vida informatico', 'angel@gmail.com', 'angel', 'f4f068e71e0d87bf0ad51e6214ab84e9', 1);
 
 -- --------------------------------------------------------
 

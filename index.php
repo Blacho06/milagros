@@ -1,111 +1,106 @@
-<?php include_once "includes/header.php";
-require "../conexion.php";
-$usuarios = mysqli_query($conexion, "SELECT * FROM usuario");
-$totalU= mysqli_num_rows($usuarios);
-$clientes = mysqli_query($conexion, "SELECT * FROM cliente");
-$totalC = mysqli_num_rows($clientes);
-$productos = mysqli_query($conexion, "SELECT * FROM producto");
-$totalP = mysqli_num_rows($productos);
-$ventas = mysqli_query($conexion, "SELECT * FROM ventas");
-$totalV = mysqli_num_rows($ventas);
+<?php
+session_start();
+if (!empty($_SESSION['active'])) {
+    header('location: src/');
+} else {
+    if (!empty($_POST)) {
+        $alert = '';
+        if (empty($_POST['usuario']) || empty($_POST['clave'])) {
+            $alert = '<div class="alert alert-danger" role="alert">
+            Ingrese su usuario y su clave
+            </div>';
+        } else {
+            require_once "conexion.php";
+            $user = mysqli_real_escape_string($conexion, $_POST['usuario']);
+            $clave = mysqli_real_escape_string($conexion, $_POST['clave']);
+            $query = mysqli_query($conexion, "SELECT * FROM usuario WHERE usuario = '$user' AND clave = '$clave' AND estado = 1");
+            mysqli_close($conexion);
+            $resultado = mysqli_num_rows($query);
+            if ($resultado > 0) {
+                $dato = mysqli_fetch_array($query);
+                $_SESSION['active'] = true;
+                $_SESSION['idUser'] = $dato['idusuario'];
+                $_SESSION['nombre'] = $dato['nombre'];
+                $_SESSION['user'] = $dato['usuario'];
+                header('location: src/');
+            } else {
+                $alert = '<div class="alert alert-danger" role="alert">
+                Usuario o Contraseña Incorrecta
+                </div>';
+                session_destroy();
+            }
+        }
+    }
+}
 ?>
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray">Panel de Administración</h1>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
 
-    <!-- Content Row -->
-    <div class="row">
-        <a class="col-xl-3 col-md-6 mb-4" href="usuarios.php">
-            <div class="card border-left-primary shadow h-100 py-2 bg-warning">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-white text-uppercase mb-1">Usuarios</div>
-                            <div class="h5 mb-0 font-weight-bold text-white"><?php echo $totalU; ?></div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-user fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Iniciar Sessión</title>
+    <link href="assets/css/styles.css" rel="stylesheet" />
+    <script src="assets/js/all.min.js" crossorigin="anonymous"></script>
+</head>
 
-        <!-- Earnings (Monthly) Card Example -->
-        <a class="col-xl-3 col-md-6 mb-4" href="clientes.php">
-            <div class="card border-left-success shadow h-100 py-2 bg-success">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-white text-uppercase mb-1">Clientes</div>
-                            <div class="h5 mb-0 font-weight-bold text-white"><?php echo $totalC; ?></div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-
-        <!-- Earnings (Monthly) Card Example -->
-        <a class="col-xl-3 col-md-6 mb-4" href="productos.php">
-            <div class="card border-left-info shadow h-100 py-2 bg-primary">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-white text-uppercase mb-1">Productos</div>
-                            <div class="row no-gutters align-items-center">
-                                <div class="col-auto">
-                                    <div class="h5 mb-0 mr-3 font-weight-bold text-white"><?php echo $totalP; ?></div>
+<body class="bg-primary">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header text-center">
+                                    <img class="img-thumbnail" src="assets/img/logo.png" width="100">
+                                    <h3 class="font-weight-light my-4">Iniciar Sesión</h3>
                                 </div>
-                                <div class="col">
-                                    <div class="progress progress-sm mr-2">
-                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
+                                <div class="card-body">
+                                    <form action="" method="POST">
+                                        <div class="form-group">
+                                            <label class="small mb-1" for="usuario"><i class="fas fa-user"></i> Usuario</label>
+                                            <input class="form-control py-4" id="usuario" name="usuario" type="text" placeholder="Ingrese usuario" required />
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="small mb-1" for="clave"><i class="fas fa-key"></i> Contraseña</label>
+                                            <input class="form-control py-4" id="clave" name="clave" type="password" placeholder="Ingrese Contraseña" required />
+                                        </div>
+                                        <div class="alert alert-danger text-center d-none" id="alerta" role="alert">
+
+                                        </div>
+                                        <?php echo isset($alert) ? $alert : ''; ?>
+                                        <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
+                                            <button class="btn btn-primary" type="submit">Login</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                        </div>
                     </div>
                 </div>
-            </div>
-        </a>
-
-        <!-- Pending Requests Card Example -->
-        <a class="col-xl-3 col-md-6 mb-4" href="ventas.php">
-            <div class="card border-left-warning bg-danger shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-white text-uppercase mb-1">Ventas</div>
-                            <div class="h5 mb-0 font-weight-bold text-white"><?php echo $totalV; ?></div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-dollar-sign fa-2x text-white-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-        <div class="col-lg-6">
-            <div class="au-card m-b-30">
-                <div class="au-card-inner">
-                    <h3 class="title-2 m-b-40">Productos con stock mínimo</h3>
-                    <canvas id="sales-chart"></canvas>
-                </div>
-            </div>
+            </main>
         </div>
-        <div class="col-lg-6">
-            <div class="au-card m-b-30">
-                <div class="au-card-inner">
-                    <h3 class="title-2 m-b-40">Productos más vendidos</h3>
-                    <canvas id="polarChart"></canvas>
+        <div id="layoutAuthentication_footer">
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">© Milagros. Reservados todos los derechos <?php echo date("Y"); ?></div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </footer>
         </div>
     </div>
-
-<?php include_once "includes/footer.php"; ?>
+    <script src="assets/js/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+    <script src="assets/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="assets/js/scripts.js"></script>
+</body>
+</html>
